@@ -67,7 +67,7 @@ describe('ec-encrypt', () => {
       };
       let expReturnedCipher = {
         bufCiphertext: Buffer.concat([bufEncrypted, bufFinal], totalLength),
-        bufTag: bufTag
+        bufTag
       };
       sandbox.stub(crypto, 'createCipheriv').returns(cipher);
 
