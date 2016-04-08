@@ -1,11 +1,11 @@
 import crypto from 'crypto';
-// require('source-map-support/register');
+import 'source-map-support/register';
 
-/* Edgecast token generation */
+/* Edgecast token generation ported from ectoken_v3 */
 
 const G_IV_LEN = 12;
 
-function constructToken(lIv, lTag, lCiphertext) {
+function constructToken (lIv, lTag, lCiphertext) {
   let totalLength = lIv.length + lTag.length + lCiphertext.length;
   let buf = Buffer.concat([lIv, lCiphertext, lTag], totalLength);
 
@@ -16,7 +16,7 @@ function constructToken(lIv, lTag, lCiphertext) {
   return token;
 }
 
-function ecEncrypt(aKey, aIv, string) {
+function ecEncrypt (aKey, aIv, string) {
   const cipher = crypto.createCipheriv('aes-256-gcm', aKey, aIv);
   let encrypted = cipher.update(string);
   let final = cipher.final();
@@ -30,17 +30,17 @@ function ecEncrypt(aKey, aIv, string) {
   };
 }
 
-function generateIv() {
+function generateIv () {
   return crypto.randomBytes(G_IV_LEN);
 }
 
-function generateHash(key) {
+function generateHash (key) {
   return crypto.createHash('sha256')
     .update(key, 'utf8')
     .digest();
 }
 
-function generateToken(string, key) {
+function generateToken (string, key) {
   const lKey = this.generateHash(key);
   const lIv = this.generateIv();
   const lCipher = this.ecEncrypt(lKey, lIv, new Buffer(string));
@@ -49,7 +49,7 @@ function generateToken(string, key) {
   return lToken;
 }
 
-function main (argv){
+function main (argv) {
   let key = argv[2];
   let string = argv[3];
 
@@ -58,10 +58,10 @@ function main (argv){
 }
 
 export default {
-  main,
-  generateToken,
-  generateHash,
-  generateIv,
+  constructToken,
   ecEncrypt,
-  constructToken
+  generateIv,
+  generateHash,
+  generateToken,
+  main
 }
