@@ -17,6 +17,7 @@
   "author": "Christopher Wei",
   "license": "ISC",
   "dependencies": {
+    "base64-url": "^1.2.2",
     "source-map-support": "^0.4.0",
     "urlsafe-base64": "^1.0.0"
   },

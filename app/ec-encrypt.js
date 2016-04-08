@@ -1,12 +1,16 @@
 import crypto from 'crypto';
+import URLSafeBase64 from 'urlsafe-base64';
+import base64url from 'base64-url';
 
 const G_IV_LEN = 12;
 
 function constructToken(lIv, lTag, lCiphertext) {
   let totalLength = lIv.length + lTag.length + lCiphertext.length;
   let token = Buffer.concat([lIv, lCiphertext, lTag], totalLength);
-  token = token.toString('base64')
-  token = encodeURI(token);
+
+  token = token.toString('base64');
+  token = token.replace(/\+/g, '\-');
+  token = token.replace(/\//g, '\_');
 
   return token;
 }
@@ -29,18 +33,18 @@ function generateIv() {
   return crypto.randomBytes(G_IV_LEN);
 }
 
-function generateHmac(key) {
-  return crypto.createHmac('sha256', key).digest();
+function generateHash(key) {
+  return crypto.createHash('sha256')
+    .update(key, 'utf8')
+    .digest();
 }
 
 function generateToken(string, key) {
-  const lKey = this.generateHmac(key);
+  const lKey = this.generateHash(key);
   const lIv = this.generateIv();
   const lCiphertext = this.ecEncrypt(lKey, lIv, new Buffer(string));
   const lToken = this.constructToken(lIv, lCiphertext.tag, lCiphertext.ciphertext);
 
-  console.log('ciphertext', lCiphertext);
-  console.log('lToken', lToken);
   return lToken;
 }
 
@@ -48,15 +52,13 @@ function main (argv) {
   let key = argv[2];
   let string = argv[3];
 
-  console.log('key', key);
-  console.log('string', string);
   this.generateToken(string, key);
 }
 
 export default {
   main,
   generateToken,
-  generateHmac,
+  generateHash,
   generateIv,
   ecEncrypt,
   constructToken
