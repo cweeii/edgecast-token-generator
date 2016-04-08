@@ -5,9 +5,9 @@ import 'source-map-support/register';
 
 const IV_LEN = 12;
 
-function constructToken (iv, tag, ciphertext) {
-  const totalLength = iv.length + tag.length + ciphertext.length;
-  let buf = Buffer.concat([iv, ciphertext, tag], totalLength);
+function constructToken (bufIv, bufTag, bufCiphertext) {
+  const totalLength = bufIv.length + bufTag.length + bufCiphertext.length;
+  let buf = Buffer.concat([bufIv, bufCiphertext, bufTag], totalLength);
 
   let token = buf.toString('base64');
   token = token.replace(/\+/g, '\-');
@@ -16,17 +16,17 @@ function constructToken (iv, tag, ciphertext) {
   return token;
 }
 
-function ecEncrypt (key, iv, expireTime) {
-  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-  let encrypted = cipher.update(expireTime);
-  let final = cipher.final();
-  const totalLength = encrypted.length + final.length;
+function ecEncrypt (bufKey, bufIv, bufExpireTime) {
+  const cipher = crypto.createCipheriv('aes-256-gcm', bufKey, bufIv);
+  let bufEncrypted = cipher.update(bufExpireTime);
+  let bufFinal = cipher.final();
+  const totalLength = bufEncrypted.length + bufFinal.length;
 
-  encrypted = Buffer.concat([encrypted, final], totalLength);
+  bufEncrypted = Buffer.concat([bufEncrypted, bufFinal], totalLength);
 
   return {
-    ciphertext: encrypted,
-    tag: cipher.getAuthTag()
+    bufCiphertext: bufEncrypted,
+    bufTag: cipher.getAuthTag()
   };
 }
 
@@ -41,10 +41,10 @@ function generateHash (key) {
 }
 
 function generateToken (expireTime, key) {
-  const hash = this.generateHash(key);
-  const iv = this.generateIv();
-  const cipher = this.ecEncrypt(hash, iv, new Buffer(expireTime));
-  const token = this.constructToken(iv, cipher.tag, cipher.ciphertext);
+  const bufHash = this.generateHash(key);
+  const bufIv = this.generateIv();
+  const cipher = this.ecEncrypt(bufHash, bufIv, new Buffer(expireTime));
+  const token = this.constructToken(bufIv, cipher.bufTag, cipher.bufCiphertext);
 
   return token;
 }

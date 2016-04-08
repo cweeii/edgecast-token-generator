@@ -44,7 +44,7 @@ describe('ec-encrypt', () => {
       let exptoken = generateToken();
 
       let token = ecEncrypt.constructToken(bufIv, bufTag, bufCiphertext);
-      
+
       assert.equal(token.indexOf('\+'), -1, 'the character \'\+\' should have been replaced with \'\-\' in the token');
       assert.equal(token.indexOf('\/'), -1, 'the character \'\/\' should have been replaced with \'\_\' in the token');
       assert.equal(exptoken, token, 'returned token should have been equal to the expected token');
@@ -66,8 +66,8 @@ describe('ec-encrypt', () => {
         })
       };
       let expReturnedCipher = {
-        ciphertext: Buffer.concat([bufEncrypted, bufFinal], totalLength),
-        tag: bufTag
+        bufCiphertext: Buffer.concat([bufEncrypted, bufFinal], totalLength),
+        bufTag: bufTag
       };
       sandbox.stub(crypto, 'createCipheriv').returns(cipher);
 
