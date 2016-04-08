@@ -16,7 +16,6 @@ function constructToken(lIv, lTag, lCiphertext) {
 
 function ecEncrypt(aKey, aIv, string) {
   const cipher = crypto.createCipheriv('aes-256-gcm', aKey, aIv);
-  console.log('ciPHER', cipher)
   let encrypted = cipher.update(string);
   let final = cipher.final();
   let totalLength = encrypted.length + final.length;

@@ -19,21 +19,44 @@ describe('ecEncrypt', () => {
     sandbox.restore();
   });
 
-  context('#main', () => {
-    it('should pass the correct parameters into #generateToken', () =>{
-      sandbox.stub(ecEncrypt, 'generateToken');
-      sandbox.stub(console, 'log');
+  context('#constructToken', () => {
 
-      let keyLength = argv[2].length;
-      let stringLength = argv[3].length;
+  });
 
-      let tokenLength = (stringLength + (16 * 2)) * 4;
+  context('#ecEncrypt', () => {
+    it('should call crypto.createCipheriv and transform cipher', () => {
+      let algorithm = 'some-algorithm';
+      let key = 'some-key';
+      let iv = 'some-iv';
+      let string = 'some-expiration-time';
+      let algorithm = 'aes-256-gcm';
+      let cipher = {
+        update: sandbox.spy(() => {
+          return new Buffer('encrypted');
+        }),
+        final: sandbox.spy(() => {
+          return new Buffer('final');
+        }),
+        getAuthTag: sandbox.spy(() => {
+          return new Buffer('tag');
+        })
+      }
+      sandbox.stub(crypto, 'createCipheriv').returns(cipher);
 
-      let args = [string, key];
+      ecEncrypt.ecEncrypt(key, iv, string);
 
-      ecEncrypt.main(argv);
-      assert.deepEqual(ecEncrypt.generateToken.args[0], args, 'generateToken should have been called with token length, string, string length, key, and key length');
+      assert.deepEqual(crypto.createCipheriv.args[0], [algorithm, key, iv], 'crypto.createCipheriv should have been called with key, iv, and string');
     });
+  });
+
+  context('#generateIv', () => {
+    it('should call crypto.randomBytes to generate a random 12 byte number', () => {
+      sandbox.stub(crypto, 'randomBytes')
+
+      ecEncrypt.generateIv();
+
+      assert.equal(crypto.randomBytes.args[0][0], 12, 'crypto.randomBytes should have been called with 12');
+    })
   });
 
   context('#generateToken', () => {
@@ -54,35 +77,19 @@ describe('ecEncrypt', () => {
     });
   });
 
-  context('#generateIv', () => {
-    it('should call crypto.randomBytes to generate a random 12 byte number', () => {
-      sandbox.stub(crypto, 'randomBytes')
+  context('#main', () => {
+    it('should pass the correct parameters into #generateToken', () => {
+      sandbox.stub(ecEncrypt, 'generateToken').returns('stub returned');
 
-      ecEncrypt.generateIv();
+      let keyLength = argv[2].length;
+      let stringLength = argv[3].length;
 
-      assert.equal(crypto.randomBytes.args[0][0], 12, 'crypto.randomBytes should have been called with 12');
-    })
-  });
+      let tokenLength = (stringLength + (16 * 2)) * 4;
 
-  context('#ecEncrypt', () => {
-    it('should call crypto.createCipheriv and transform cipher', () => {
-      sandbox.stub(crypto, 'createCipheriv').returns(cipher);
-      let algorithm = 'some-algorithm';
-      let key = 'some-key';
-      let iv = 'some-iv';
-      let string = 'some-expiration-time';
-      let cipher = {
-        update: sandbox.spy(),
-        final: sandbox.spy()
-      }
+      let args = [string, key];
 
-      ecEncrypt.ecEncrypt(algorithm, key, iv);
-
-      assert.deepEqual(crypto.createCipheriv.args[0], [key, iv, string], 'crypto.createCipheriv should have been called with key, iv, and string');
+      ecEncrypt.main(argv);
+      assert.deepEqual(ecEncrypt.generateToken.args[0], args, 'generateToken should have been called with token length, string, string length, key, and key length');
     });
-  });
-
-  context('#constructToken', () => {
-
   });
 });
