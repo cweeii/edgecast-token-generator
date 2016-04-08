@@ -16,9 +16,9 @@ function constructToken (iv, tag, ciphertext) {
   return token;
 }
 
-function ecEncrypt (aKey, aIv, string) {
-  const cipher = crypto.createCipheriv('aes-256-gcm', aKey, aIv);
-  let encrypted = cipher.update(string);
+function ecEncrypt (key, iv, expireTime) {
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  let encrypted = cipher.update(expireTime);
   let final = cipher.final();
   let totalLength = encrypted.length + final.length;
 
@@ -40,10 +40,10 @@ function generateHash (key) {
     .digest();
 }
 
-function generateToken (string, key) {
+function generateToken (expireTime, key) {
   const hash = this.generateHash(key);
   const iv = this.generateIv();
-  const cipher = this.ecEncrypt(hash, iv, new Buffer(string));
+  const cipher = this.ecEncrypt(hash, iv, new Buffer(expireTime));
   const token = this.constructToken(iv, cipher.tag, cipher.ciphertext);
 
   return token;
@@ -51,9 +51,9 @@ function generateToken (string, key) {
 
 function main (argv) {
   let key = argv[2];
-  let string = argv[3];
+  let expireTime = argv[3];
 
-  let token = this.generateToken(string, key);
+  let token = this.generateToken(expireTime, key);
   console.log(token);
 }
 
