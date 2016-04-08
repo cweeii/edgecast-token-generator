@@ -7,7 +7,7 @@ import ecEncrypt from './ec-encrypt';
 describe('ecEncrypt', () => {
   let sandbox;
 
-  const G_IV_LEN = 12;
+  const IV_LEN = 12;
   const algorithm = 'aes-256-gcm';
   const key = 'secret-key';
   const iv = 'some-iv';
@@ -88,7 +88,7 @@ describe('ecEncrypt', () => {
 
       ecEncrypt.generateIv();
 
-      assert.equal(crypto.randomBytes.args[0][0], G_IV_LEN, 'crypto.randomBytes should have been called with 12');
+      assert.equal(crypto.randomBytes.args[0][0], IV_LEN, 'crypto.randomBytes should have been called with 12');
     })
   });
 

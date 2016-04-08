@@ -3,11 +3,11 @@ import 'source-map-support/register';
 
 /* Edgecast token generation ported from ectoken_v3 */
 
-const G_IV_LEN = 12;
+const IV_LEN = 12;
 
-function constructToken (lIv, lTag, lCiphertext) {
-  let totalLength = lIv.length + lTag.length + lCiphertext.length;
-  let buf = Buffer.concat([lIv, lCiphertext, lTag], totalLength);
+function constructToken (iv, tag, ciphertext) {
+  let totalLength = iv.length + tag.length + ciphertext.length;
+  let buf = Buffer.concat([iv, ciphertext, tag], totalLength);
 
   let token = buf.toString('base64');
   token = token.replace(/\+/g, '\-');
@@ -31,7 +31,7 @@ function ecEncrypt (aKey, aIv, string) {
 }
 
 function generateIv () {
-  return crypto.randomBytes(G_IV_LEN);
+  return crypto.randomBytes(IV_LEN);
 }
 
 function generateHash (key) {
@@ -41,12 +41,12 @@ function generateHash (key) {
 }
 
 function generateToken (string, key) {
-  const lKey = this.generateHash(key);
-  const lIv = this.generateIv();
-  const lCipher = this.ecEncrypt(lKey, lIv, new Buffer(string));
-  const lToken = this.constructToken(lIv, lCipher.tag, lCipher.ciphertext);
+  const hash = this.generateHash(key);
+  const iv = this.generateIv();
+  const cipher = this.ecEncrypt(hash, iv, new Buffer(string));
+  const token = this.constructToken(iv, cipher.tag, cipher.ciphertext);
 
-  return lToken;
+  return token;
 }
 
 function main (argv) {
