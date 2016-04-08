@@ -44,6 +44,7 @@ describe('ec-encrypt', () => {
       let exptoken = generateToken();
 
       let token = ecEncrypt.constructToken(bufIv, bufTag, bufCiphertext);
+      
       assert.equal(token.indexOf('\+'), -1, 'the character \'\+\' should have been replaced with \'\-\' in the token');
       assert.equal(token.indexOf('\/'), -1, 'the character \'\/\' should have been replaced with \'\_\' in the token');
       assert.equal(exptoken, token, 'returned token should have been equal to the expected token');
@@ -53,7 +54,6 @@ describe('ec-encrypt', () => {
   context('#ecEncrypt', () => {
     it('should call crypto.createCipheriv and transform cipher', () => {
       let totalLength = bufEncrypted.length + bufFinal.length;
-
       let cipher = {
         update: sandbox.spy(() => {
           return bufEncrypted;
@@ -69,7 +69,6 @@ describe('ec-encrypt', () => {
         ciphertext: Buffer.concat([bufEncrypted, bufFinal], totalLength),
         tag: bufTag
       };
-
       sandbox.stub(crypto, 'createCipheriv').returns(cipher);
 
       let returnedCipher = ecEncrypt.ecEncrypt(key, iv, string);
@@ -77,7 +76,6 @@ describe('ec-encrypt', () => {
       assert.deepEqual(crypto.createCipheriv.args[0], [algorithm, key, iv], 'crypto.createCipheriv should have been called with key, iv, and string');
       assert.equal(cipher.update.args[0][0], string, 'cipher.update should have been called with \'some-expieration-time\'');
       assert(cipher.final.calledOnce, 'cipher.final should have been called once');
-
       assert.deepEqual(expReturnedCipher, returnedCipher, 'returnedCipher should be equal to the expReturnedCipher');
     });
   });
@@ -103,7 +101,6 @@ describe('ec-encrypt', () => {
 
       assert(ecEncrypt.generateHash.calledOnce, 'generateHmac should have been called once');
       assert.equal(ecEncrypt.generateHash.args[0][0], 'some-key', 'generateHash should have been called with \'some-key\'');
-
       assert(ecEncrypt.generateIv.calledOnce, 'generateIv should have been called once');
       assert(ecEncrypt.ecEncrypt.calledOnce, 'ecEncrypt should have been called once');
       assert(ecEncrypt.constructToken.calledOnce, 'constructToken should have been called once');
@@ -113,15 +110,13 @@ describe('ec-encrypt', () => {
   context('#main', () => {
     it('should pass the correct parameters into #generateToken', () => {
       sandbox.stub(ecEncrypt, 'generateToken').returns('stub returned');
-
       let keyLength = argv[2].length;
       let stringLength = argv[3].length;
-
       let tokenLength = (stringLength + (16 * 2)) * 4;
-
       let args = [string, key];
 
       ecEncrypt.main(argv);
+
       assert.deepEqual(ecEncrypt.generateToken.args[0], args, 'generateToken should have been called with token length, string, string length, key, and key length');
     });
   });
