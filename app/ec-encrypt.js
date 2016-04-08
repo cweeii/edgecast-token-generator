@@ -6,7 +6,7 @@ import 'source-map-support/register';
 const IV_LEN = 12;
 
 function constructToken (iv, tag, ciphertext) {
-  let totalLength = iv.length + tag.length + ciphertext.length;
+  const totalLength = iv.length + tag.length + ciphertext.length;
   let buf = Buffer.concat([iv, ciphertext, tag], totalLength);
 
   let token = buf.toString('base64');
@@ -20,7 +20,7 @@ function ecEncrypt (key, iv, expireTime) {
   const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
   let encrypted = cipher.update(expireTime);
   let final = cipher.final();
-  let totalLength = encrypted.length + final.length;
+  const totalLength = encrypted.length + final.length;
 
   encrypted = Buffer.concat([encrypted, final], totalLength);
 
