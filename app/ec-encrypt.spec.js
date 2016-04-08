@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 import ecEncrypt from './ec-encrypt';
 
-describe('ecEncrypt', () => {
+describe('ec-encrypt', () => {
   let sandbox;
 
   const IV_LEN = 12;
