@@ -1,13 +1,15 @@
 import crypto from 'crypto';
 // require('source-map-support/register');
 
+/* Edgecast token generation */
+
 const G_IV_LEN = 12;
 
 function constructToken(lIv, lTag, lCiphertext) {
   let totalLength = lIv.length + lTag.length + lCiphertext.length;
-  let token = Buffer.concat([lIv, lCiphertext, lTag], totalLength);
+  let buf = Buffer.concat([lIv, lCiphertext, lTag], totalLength);
 
-  token = token.toString('base64');
+  let token = buf.toString('base64');
   token = token.replace(/\+/g, '\-');
   token = token.replace(/\//g, '\_');
 
@@ -41,13 +43,13 @@ function generateHash(key) {
 function generateToken(string, key) {
   const lKey = this.generateHash(key);
   const lIv = this.generateIv();
-  const lCiphertext = this.ecEncrypt(lKey, lIv, new Buffer(string));
-  const lToken = this.constructToken(lIv, lCiphertext.tag, lCiphertext.ciphertext);
+  const lCipher = this.ecEncrypt(lKey, lIv, new Buffer(string));
+  const lToken = this.constructToken(lIv, lCipher.tag, lCipher.ciphertext);
 
   return lToken;
 }
 
-function main (argv) {
+function main (argv){
   let key = argv[2];
   let string = argv[3];
 

@@ -7,9 +7,18 @@ import ecEncrypt from './ec-encrypt';
 describe('ecEncrypt', () => {
   let sandbox;
 
-  const key = 'key';
-  const string = 'some-string';
+  const G_IV_LEN = 12;
+  const algorithm = 'aes-256-gcm';
+  const key = 'secret-key';
+  const iv = 'some-iv';
+  const string = 'some-expiration-time';
   const argv = ['node', 'filepath', key, string];
+
+  const bufIv = new Buffer(iv);
+  const bufEncrypted = new Buffer('encrypted');
+  const bufFinal = new Buffer('final');
+  const bufTag = new Buffer('tag');
+  const bufCiphertext = new Buffer('some-ciphertext');
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -20,32 +29,56 @@ describe('ecEncrypt', () => {
   });
 
   context('#constructToken', () => {
+    function generateToken() {
+      let totalLength = bufIv.length + bufTag.length + bufCiphertext.length;
+      let buf = Buffer.concat([bufIv, bufCiphertext, bufTag], totalLength);
 
+      let token = buf.toString('base64');
+      token = token.replace(/\+/g, '\-');
+      token = token.replace(/\//g, '\_');
+
+      return token;
+    }
+
+    it('should generate a url safe base64 encoded string', () => {
+      let exptoken = generateToken();
+
+      let token = ecEncrypt.constructToken(bufIv, bufTag, bufCiphertext);
+      assert.equal(token.indexOf('\+'), -1, 'the character \'\+\' should have been replaced with \'\-\' in the token');
+      assert.equal(token.indexOf('\/'), -1, 'the character \'\/\' should have been replaced with \'\_\' in the token');
+      assert.equal(exptoken, token, 'returned token should have been equal to the expected token');
+    });
   });
 
   context('#ecEncrypt', () => {
     it('should call crypto.createCipheriv and transform cipher', () => {
-      let algorithm = 'some-algorithm';
-      let key = 'some-key';
-      let iv = 'some-iv';
-      let string = 'some-expiration-time';
-      let algorithm = 'aes-256-gcm';
+      let totalLength = bufEncrypted.length + bufFinal.length;
+
       let cipher = {
         update: sandbox.spy(() => {
-          return new Buffer('encrypted');
+          return bufEncrypted;
         }),
         final: sandbox.spy(() => {
-          return new Buffer('final');
+          return bufFinal;
         }),
         getAuthTag: sandbox.spy(() => {
-          return new Buffer('tag');
+          return bufTag;
         })
-      }
+      };
+      let expReturnedCipher = {
+        ciphertext: Buffer.concat([bufEncrypted, bufFinal], totalLength),
+        tag: bufTag
+      };
+
       sandbox.stub(crypto, 'createCipheriv').returns(cipher);
 
-      ecEncrypt.ecEncrypt(key, iv, string);
+      let returnedCipher = ecEncrypt.ecEncrypt(key, iv, string);
 
       assert.deepEqual(crypto.createCipheriv.args[0], [algorithm, key, iv], 'crypto.createCipheriv should have been called with key, iv, and string');
+      assert.equal(cipher.update.args[0][0], string, 'cipher.update should have been called with \'some-expieration-time\'');
+      assert(cipher.final.calledOnce, 'cipher.final should have been called once');
+
+      assert.deepEqual(expReturnedCipher, returnedCipher, 'returnedCipher should be equal to the expReturnedCipher');
     });
   });
 
@@ -55,7 +88,7 @@ describe('ecEncrypt', () => {
 
       ecEncrypt.generateIv();
 
-      assert.equal(crypto.randomBytes.args[0][0], 12, 'crypto.randomBytes should have been called with 12');
+      assert.equal(crypto.randomBytes.args[0][0], G_IV_LEN, 'crypto.randomBytes should have been called with 12');
     })
   });
 
