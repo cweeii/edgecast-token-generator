@@ -1,6 +1,5 @@
 import crypto from 'crypto';
-import URLSafeBase64 from 'urlsafe-base64';
-import base64url from 'base64-url';
+// require('source-map-support/register');
 
 const G_IV_LEN = 12;
 
@@ -17,6 +16,7 @@ function constructToken(lIv, lTag, lCiphertext) {
 
 function ecEncrypt(aKey, aIv, string) {
   const cipher = crypto.createCipheriv('aes-256-gcm', aKey, aIv);
+  console.log('ciPHER', cipher)
   let encrypted = cipher.update(string);
   let final = cipher.final();
   let totalLength = encrypted.length + final.length;
@@ -52,7 +52,8 @@ function main (argv) {
   let key = argv[2];
   let string = argv[3];
 
-  this.generateToken(string, key);
+  let token = this.generateToken(string, key);
+  console.log(token);
 }
 
 export default {
