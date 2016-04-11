@@ -110,9 +110,6 @@ describe('ec-encrypt', () => {
   context('#main', () => {
     it('should pass the correct parameters into #generateToken', () => {
       sandbox.stub(ecEncrypt, 'generateToken').returns('stub returned');
-      let keyLength = argv[2].length;
-      let stringLength = argv[3].length;
-      let tokenLength = (stringLength + (16 * 2)) * 4;
       let args = [key, string];
 
       ecEncrypt.main(argv);
