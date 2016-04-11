@@ -2,7 +2,7 @@
   "name": "edgecast-token-generator",
   "version": "1.0.1",
   "description": "edgecast token generator",
-  "main": "index.js",
+  "main": "lib/ec-encrypt.js",
   "scripts": {
     "encrypt": "node ./index.js",
     "test": "node --harmony ./node_modules/mocha/bin/_mocha 'lib/**/*.spec.js'",
