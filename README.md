@@ -2,7 +2,12 @@
 This is the Edgecast token generator written in javascript.  It was ported over from ectoken_v3.c.
 
 ## Usage
-`npm run encrypt <key> <expireEpoch>`
+`npm run encrypt <key> <expireTime>`
+
+Parameters: 
+  * key: secret key (string)
+  * expireTime: expiration epoch time of token (string)
+
 Returns: A token in string format
 
 ## Development
