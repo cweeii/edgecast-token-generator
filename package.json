@@ -1,6 +1,6 @@
 {
   "name": "edgecast-token-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "edgecast token generator",
   "main": "index.js",
   "scripts": {
