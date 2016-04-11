@@ -1,5 +1,5 @@
 # Edgecast Token Generator
-This is the Edgecast token generator written in javascript.  It was ported over from ectoken_v3.c.
+This is the Edgecast token generator written in javascript.  It is ported over from ectoken_v3.c.
 
 ## Usage
 `import ecEncrypt from 'ec-encrypt'`
