@@ -8,7 +8,8 @@ Parameters:
   * key: secret key (string)
   * expireTime: expiration epoch time of token (string)
 
-Returns: A token in string format
+Returns: 
+  * a token in string format
 
 ## Development
 1) `npm install`
