@@ -97,7 +97,7 @@ describe('ec-encrypt', () => {
       sandbox.stub(ecEncrypt, 'ecEncrypt').returns({});
       sandbox.stub(ecEncrypt, 'constructToken');
 
-      ecEncrypt.generateToken('some-string', 'some-key');
+      ecEncrypt.generateToken('some-key', 'some-string');
 
       assert(ecEncrypt.generateHash.calledOnce, 'generateHmac should have been called once');
       assert.equal(ecEncrypt.generateHash.args[0][0], 'some-key', 'generateHash should have been called with \'some-key\'');
@@ -113,7 +113,7 @@ describe('ec-encrypt', () => {
       let keyLength = argv[2].length;
       let stringLength = argv[3].length;
       let tokenLength = (stringLength + (16 * 2)) * 4;
-      let args = [string, key];
+      let args = [key, string];
 
       ecEncrypt.main(argv);
 

@@ -40,7 +40,7 @@ function generateHash (key) {
     .digest();
 }
 
-function generateToken (expireTime, key) {
+function generateToken (key, expireTime) {
   const bufHash = this.generateHash(key);
   const bufIv = this.generateIv();
   const cipher = this.ecEncrypt(bufHash, bufIv, new Buffer(expireTime));
@@ -53,7 +53,7 @@ function main (argv) {
   const key = argv[2];
   const expireTime = argv[3];
 
-  let token = this.generateToken(expireTime, key);
+  let token = this.generateToken(key, expireTime);
   console.log(token);
 }
 
