@@ -4,13 +4,13 @@ This is the Edgecast token generator written in javascript.  It is ported over f
 ## Usage
 es2015:
 ```javascript
-import ecEncrypt from 'ec-encrypt';
+import ecEncrypt from 'edgecast-token-generator';
 ecEncrypt.generateToken(key, expireTime);
 ```
 
 or using es5:
 ```javascript
-var ecEncrypt = require('ec-encrypt');
+var ecEncrypt = require('edgecast-token-generator');
 ecEncrypt.defaults.generateToken(key, expireTime);
 ```
 
