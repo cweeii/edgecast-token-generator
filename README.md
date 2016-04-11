@@ -2,9 +2,16 @@
 This is the Edgecast token generator written in javascript.  It is ported over from ectoken_v3.c.
 
 ## Usage
+es2015:
 ```javascript
 import ecEncrypt from 'ec-encrypt';
-ecEncrypt(key, expireTime);
+ecEncrypt.generateToken(key, expireTime);
+```
+
+or using es5:
+```javascript
+var ecEncrypt = require('ec-encrypt');
+ecEncrypt.defaults.generateToken(key, expireTime);
 ```
 
 Parameters: 
