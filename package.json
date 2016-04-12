@@ -1,6 +1,6 @@
 {
   "name": "edgecast-token-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "edgecast token generator",
   "main": "lib/ec-encrypt.js",
   "scripts": {
