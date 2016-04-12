@@ -15,8 +15,8 @@ ecEncrypt.defaults.generateToken(key, expireTime);
 ```
 
 Parameters: 
-  * key: secret key (string)
-  * expireTime: expiration epoch time of token (string)
+  * key: secret key (string or number)
+  * expireTime: expiration epoch time of token (string or number)
 
 Returns: 
   * a token in string format

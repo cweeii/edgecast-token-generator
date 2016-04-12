@@ -41,6 +41,9 @@ function generateHash (key) {
 }
 
 function generateToken (key, expireTime) {
+  key = String(key);
+  expireTime = String(expireTime);
+
   const bufHash = this.generateHash(key);
   const bufIv = this.generateIv();
   const cipher = this.ecEncrypt(bufHash, bufIv, new Buffer(expireTime));

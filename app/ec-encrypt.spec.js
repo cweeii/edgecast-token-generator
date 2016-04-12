@@ -91,12 +91,18 @@ describe('ec-encrypt', () => {
   });
 
   context('#generateToken', () => {
-    it('should call generateHash, generateIv, ecEncrypt, and constructToken', () => {
+    beforeEach(() => {
       sandbox.stub(ecEncrypt, 'generateHash');
       sandbox.stub(ecEncrypt, 'generateIv');
       sandbox.stub(ecEncrypt, 'ecEncrypt').returns({});
       sandbox.stub(ecEncrypt, 'constructToken');
+    });
 
+    afterEach(() => {
+      sandbox.restore();
+    })
+
+    it('should call generateHash, generateIv, ecEncrypt, and constructToken', () => {
       ecEncrypt.generateToken('some-key', 'some-string');
 
       assert(ecEncrypt.generateHash.calledOnce, 'generateHmac should have been called once');
@@ -104,6 +110,16 @@ describe('ec-encrypt', () => {
       assert(ecEncrypt.generateIv.calledOnce, 'generateIv should have been called once');
       assert(ecEncrypt.ecEncrypt.calledOnce, 'ecEncrypt should have been called once');
       assert(ecEncrypt.constructToken.calledOnce, 'constructToken should have been called once');
+    });
+
+    it('should accept numerical parameters but convert them to string', () => {
+      let key = 1234;
+      let expireTime = 5678;
+
+      ecEncrypt.generateToken(key, expireTime);
+
+      assert.equal(typeof ecEncrypt.generateHash.args[0][0], typeof 'string', 'type of argument passed to generateHash should match string type');
+      assert.deepEqual(ecEncrypt.ecEncrypt.args[0][2], new Buffer(String(expireTime)), 'expireTime should have been converted to a string before adding to buffer');
     });
   });
 
